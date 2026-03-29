@@ -1,5 +1,7 @@
 package com.carolina.projeto_cobranca_financeira.dto;
 
+import enums.StatusContrato;
+import enums.StatusFatura;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -12,6 +14,12 @@ public class FaturaDTO {
 
     @NotBlank(message = "Código da fatura obrigatório")
     private String codigoFatura;
+
+    @NotNull(message = "Status da fatura obrigatório")
+    private StatusFatura statusFatura;
+
+    @NotNull(message = "Status contrato obrigatório")
+    private StatusContrato statusContrato;
 
     @NotBlank(message = "Código de barras obrigatório")
     private String codigoBarras;

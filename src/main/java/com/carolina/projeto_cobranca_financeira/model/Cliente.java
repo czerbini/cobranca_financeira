@@ -1,5 +1,6 @@
 package com.carolina.projeto_cobranca_financeira.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -37,5 +38,6 @@ public class Cliente {
     private String telefone;
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Fatura> faturas;
 }
