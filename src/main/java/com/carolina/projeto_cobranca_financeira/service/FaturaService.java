@@ -5,12 +5,14 @@ import com.carolina.projeto_cobranca_financeira.model.Cliente;
 import com.carolina.projeto_cobranca_financeira.model.Fatura;
 import com.carolina.projeto_cobranca_financeira.repository.ClienteRepository;
 import com.carolina.projeto_cobranca_financeira.repository.FaturaRepository;
+import enums.StatusFatura;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +24,7 @@ public class FaturaService {
 
     private final FaturaRepository faturaRepository;
     private final ClienteRepository clienteRepository;
+    private final EmailService emailService;
 
     public Fatura criar(FaturaDTO dto) {
         Cliente cliente = clienteRepository.findByCpf(dto.getCpfCliente())
@@ -44,4 +47,35 @@ public class FaturaService {
         return faturaRepository.findByClienteCpf(cpf);
     }
 
+    public void enviarSegundaVia(Long faturaId) {
+        Fatura f = faturaRepository.findById(faturaId)
+                .orElseThrow(() -> new RuntimeException("Fatura não encontrada"));
+
+        String mensagem = "Olá, " + f.getCliente().getNome() + "!\n\n"
+                + "Segue a segunda via da sua fatura.\n"
+                + "Código: " + f.getCodigoFatura() + "\n"
+                + "Valor: R$ " + f.getValor() + "\n"
+                + "Vencimento: " + f.getDataVencimento() + "\n"
+                + "Código de Barras: " + f.getCodigoBarras();
+
+        emailService.enviarEmail(f.getCliente().getEmail(), "Segunda Via da Fatura", mensagem);
+        log.info("Segunda via enviada para {}", f.getCliente().getEmail());
+    }
+
+    public void enviarLembretesVencimento() {
+        LocalDate amanha = LocalDate.now().plusDays(1);
+        List<Fatura> faturas = faturaRepository.findByDataVencimentoAndStatusFatura(amanha, StatusFatura.EMITIDA);
+
+        for (Fatura f : faturas) {
+            String mensagem = "Olá, " + f.getCliente().getNome() + "!\n\n"
+                    + "Sua fatura vence amanhã!\n"
+                    + "Código: " + f.getCodigoFatura() + "\n"
+                    + "Valor: R$ " + f.getValor() + "\n"
+                    + "Vencimento: " + f.getDataVencimento() + "\n"
+                    + "Código de Barras: " + f.getCodigoBarras();
+
+            emailService.enviarEmail(f.getCliente().getEmail(), "Lembrete de Vencimento", mensagem);
+            log.info("Lembrete enviado para {}", f.getCliente().getEmail());
+        }
+    }
 }
