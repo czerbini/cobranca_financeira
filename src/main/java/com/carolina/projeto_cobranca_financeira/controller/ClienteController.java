@@ -6,10 +6,7 @@ import com.carolina.projeto_cobranca_financeira.repository.ClienteRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -27,5 +24,12 @@ public class ClienteController {
         cliente.setEmail(dto.getEmail());
         cliente.setTelefone(dto.getTelefone());
         return ResponseEntity.ok(clienteRepository.save(cliente));
+    }
+
+    @GetMapping("/{cpf}")
+    public ResponseEntity<Cliente> buscarPorCpf(@PathVariable String cpf) {
+        return clienteRepository.findByCpf(cpf)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
