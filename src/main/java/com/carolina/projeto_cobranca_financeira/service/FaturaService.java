@@ -22,6 +22,7 @@ public class FaturaService {
 
     private final FaturaRepository faturaRepository;
     private final ClienteRepository clienteRepository;
+    private final EmailService emailService;
 
     public Fatura criar(FaturaDTO dto) {
         Cliente cliente = clienteRepository.findByCpf(dto.getCpfCliente())
@@ -44,4 +45,18 @@ public class FaturaService {
         return faturaRepository.findByClienteCpf(cpf);
     }
 
+    public void enviarSegundaVia(Long faturaId) {
+        Fatura f = faturaRepository.findById(faturaId)
+                .orElseThrow(() -> new RuntimeException("Fatura não encontrada"));
+
+        String mensagem = "Olá, " + f.getCliente().getNome() + "!\n\n"
+                + "Segue a segunda via da sua fatura.\n"
+                + "Código: " + f.getCodigoFatura() + "\n"
+                + "Valor: R$ " + f.getValor() + "\n"
+                + "Vencimento: " + f.getDataVencimento() + "\n"
+                + "Código de Barras: " + f.getCodigoBarras();
+
+        emailService.enviarEmail(f.getCliente().getEmail(), "Segunda Via da Fatura", mensagem);
+        log.info("Segunda via enviada para {}", f.getCliente().getEmail());
+    }
 }

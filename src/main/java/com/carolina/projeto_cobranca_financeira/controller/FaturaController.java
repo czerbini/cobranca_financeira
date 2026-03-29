@@ -27,4 +27,10 @@ public class FaturaController {
     public ResponseEntity<List<Fatura>> buscarPorCpf(@PathVariable String cpf) {
         return ResponseEntity.ok(faturaService.buscarFaturaPorCpf(cpf));
     }
+
+    @PostMapping("/{id}/segunda-via")
+    public ResponseEntity<String> segundaVia(@PathVariable Long id) {
+        faturaService.enviarSegundaVia(id);
+        return ResponseEntity.ok("Segunda via enviada!");
+    }
 }
