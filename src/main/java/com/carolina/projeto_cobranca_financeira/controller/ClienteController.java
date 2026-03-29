@@ -27,7 +27,7 @@ public class ClienteController {
     }
 
     @GetMapping("/{cpf}")
-    public ResponseEntity<Cliente> buscarPorCpf(@PathVariable String cpf) {
+    public ResponseEntity<Cliente> buscarClientePorCpf(@PathVariable String cpf) {
         return clienteRepository.findByCpf(cpf)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
