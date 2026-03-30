@@ -34,9 +34,9 @@ public class FaturaController {
         return ResponseEntity.ok("Segunda via enviada com sucesso!");
     }
 
-    @PostMapping("/enviar-lembretes")
-    public ResponseEntity<String> enviarLembretes() {
-        faturaService.enviarLembretesVencimento();
-        return ResponseEntity.ok("Lembretes enviados!");
+    @PostMapping("/enviar-vencidas")
+    public ResponseEntity<String> enviarVencidas() {
+        faturaService.enviarFaturasVencidas();
+        return ResponseEntity.ok("Cobranças enviadas!");
     }
 }

@@ -62,20 +62,24 @@ public class FaturaService {
         log.info("Segunda via enviada para {}", f.getCliente().getEmail());
     }
 
-    public void enviarLembretesVencimento() {
-        LocalDate amanha = LocalDate.now().plusDays(1);
-        List<Fatura> faturas = faturaRepository.findByDataVencimentoAndStatusFatura(amanha, StatusFatura.EMITIDA);
+    public void enviarFaturasVencidas() {
+        List<Fatura> faturas = faturaRepository.findByStatusFatura(StatusFatura.EMITIDA);
 
         for (Fatura f : faturas) {
-            String mensagem = "Olá, " + f.getCliente().getNome() + "!\n\n"
-                    + "Sua fatura vence amanhã!\n"
-                    + "Código: " + f.getCodigoFatura() + "\n"
-                    + "Valor: R$ " + f.getValor() + "\n"
-                    + "Vencimento: " + f.getDataVencimento() + "\n"
-                    + "Código de Barras: " + f.getCodigoBarras();
+            if (f.getDataVencimento().isBefore(LocalDate.now())) {
 
-            emailService.enviarEmail(f.getCliente().getEmail(), "Lembrete de Vencimento", mensagem);
-            log.info("Lembrete enviado para {}", f.getCliente().getEmail());
+                String mensagem = "Olá, " + f.getCliente().getNome() + "!\n\n"
+                        + "Sua fatura está vencida.\n"
+                        + "Código: " + f.getCodigoFatura() + "\n"
+                        + "Valor: R$ " + f.getValor() + "\n"
+                        + "Vencimento: " + f.getDataVencimento() + "\n"
+                        + "Código de Barras: " + f.getCodigoBarras();
+
+                emailService.enviarEmail(f.getCliente().getEmail(), "Fatura Vencida", mensagem);
+                f.setStatusFatura(StatusFatura.VENCIDA);
+                faturaRepository.save(f);
+                log.info("Cobrança enviada para {}", f.getCliente().getEmail());
+            }
         }
     }
 }
