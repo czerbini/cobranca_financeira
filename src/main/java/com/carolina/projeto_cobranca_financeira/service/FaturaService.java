@@ -82,4 +82,21 @@ public class FaturaService {
             }
         }
     }
+
+    public void enviarLembretesVencimento() {
+        LocalDate amanha = LocalDate.now().plusDays(1);
+        List<Fatura> faturas = faturaRepository.findByDataVencimentoAndStatusFatura(amanha, StatusFatura.EMITIDA);
+
+        for (Fatura f : faturas) {
+            String mensagem = "Olá, " + f.getCliente().getNome() + "!\n\n"
+                    + "Sua fatura vence amanhã!\n"
+                    + "Código: " + f.getCodigoFatura() + "\n"
+                    + "Valor: R$ " + f.getValor() + "\n"
+                    + "Vencimento: " + f.getDataVencimento() + "\n"
+                    + "Código de Barras: " + f.getCodigoBarras();
+
+            emailService.enviarEmail(f.getCliente().getEmail(), "Lembrete de Vencimento", mensagem);
+            log.info("Lembrete enviado para {}", f.getCliente().getEmail());
+        }
+    }
 }
