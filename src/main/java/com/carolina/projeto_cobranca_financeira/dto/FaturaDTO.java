@@ -1,7 +1,7 @@
 package com.carolina.projeto_cobranca_financeira.dto;
 
-import enums.StatusContrato;
-import enums.StatusFatura;
+import com.carolina.projeto_cobranca_financeira.enums.StatusContrato;
+import com.carolina.projeto_cobranca_financeira.enums.StatusFatura;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
