@@ -42,7 +42,7 @@ O sistema realiza o controle do ciclo de faturamento, desde a criação até o e
 
 O projeto segue uma estrutura organizada em camadas:
 
-src/main/java/com/carolina/projeto_cobranca_financeira
+src/main/java/com/carolina/projeto_cobranca_financeira  
 ├── controller  
 ├── service  
 ├── repository  
